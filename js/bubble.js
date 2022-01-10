@@ -1,4 +1,4 @@
-var track;
+
 class WebcamFlow {
 	constructor(zoneSize) {
 		var resolution={width: {exact: 640}, height: {exact: 480}}; 
@@ -11,12 +11,6 @@ class WebcamFlow {
 			console.log(e);
         },
         onWebCamSucceed = function(stream) {
-			track = stream.getVideoTracks()[0];
-			track.applyConstraints({advanced: [ {
-														exposureMode: "manual",
-														exposureTime: 500
-
-												} ]});
             isCapturing = true;
             videoTag.srcObject = stream;
             videoTag.play();
@@ -54,7 +48,7 @@ class WebcamFlow {
 					canvas.width  = width;
 					canvas.height = height;
 					if (width && height) {
-						ctx.filter = 'blur(8px)';
+						ctx.filter = 'blur(4px)';
 						ctx.drawImage(video, 0, 0, 640, 360, 0, 0, 640, 360);
 						var imgd = ctx.getImageData(0, 0, width, height);
 						return imgd.data;
@@ -173,11 +167,11 @@ class Bubble {
 		let thresholdValuesBG = [];
 		let windowSize=3;
 		let finalThreshold=12;
-		let bgFactor=600;
+		let bgFactor=1000;
 		let zoneSize = 4; 
 		let w = 1920;
 		let h = 1080;
-		let zoneTH=7;
+		let zoneTH=10;
 		let preselected=false;
 		let preselectedTimeout;
 		let elementLeft = [];

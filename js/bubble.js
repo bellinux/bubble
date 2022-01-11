@@ -48,7 +48,7 @@ class WebcamFlow {
 					canvas.width  = width;
 					canvas.height = height;
 					if (width && height) {
-						ctx.filter = 'blur(4px)';
+						ctx.filter = 'grayscale(1) blur(4px)';
 						ctx.drawImage(video, 0, 0, 640, 360, 0, 0, 640, 360);
 						var imgd = ctx.getImageData(0, 0, width, height);
 						return imgd.data;
@@ -101,6 +101,7 @@ class WebcamFlow {
 										u = v = 0;
 									}
 								}
+								
 								zones.push({x: globalX, y: globalY, u: u, v: v, intensity: Math.abs(u)+Math.abs(v)});
 							}
 						}
@@ -124,7 +125,13 @@ class WebcamFlow {
 				},
 				animloop = function () {
 					if (isCapturing) {
-						loopId = videoTag.requestVideoFrameCallback(animloop);
+						if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+							loopId = videoTag.requestVideoFrameCallback(animloop); //chrome
+						} else {
+							loopId = window.requestAnimationFrame(animloop); //other browser
+						}
+						
+						
 						calculate();
 					}
 				};
@@ -187,7 +194,7 @@ class Bubble {
 		let lastActivityActivation=[];
 		var totalZones = (Math.ceil((h - 1) / (2 * zoneSize + 1)) - 1) * (Math.ceil((w - 1) / (2 * zoneSize + 1)) - 1);
 		let totalMovementArray=[0,0,0,0,0,0,0,0];
-		let totalMovementsThreshold=40000;
+		let totalMovementsThreshold=30000;
 		let hideTimeout=6000;
 		let repeatedActivationTime=2500;
 		let repeatedActivationTimeContinuous=600;
@@ -262,6 +269,9 @@ class Bubble {
 				}
 				
 			}
+			
+			if (movementIntensity==0)
+				return;
 			
 			//console.log(zoneInsideElementsBG);
 			
